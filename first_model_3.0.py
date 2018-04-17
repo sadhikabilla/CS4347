@@ -29,6 +29,8 @@ def getData():
   
 x, y = getData()
 x = x.astype(float)
+
+# print(y);
 #y = y.astype(float)
 
 # Feature selection
@@ -40,6 +42,10 @@ x = x.astype(float)
 #selector = selector.fit(x, y)
 #x = selector.transform(x)
 #print(x.shape)
+
+#Feature selection
+#1 SelectKBest
+
 
 
 clf_svm = svm.SVC(probability=True)
@@ -79,7 +85,7 @@ for clf, label in zip([clf_svm, clf_knn, clf_dtree, clf_logreg, clf_gnb, clf_lda
     norm_c_mat = 100 * c_mat / c_mat.sum(axis=1)[:, np.newaxis]
     #print(norm_c_mat)
     scores = np.diagonal(norm_c_mat)
-    print("Accuracy: %0.2f%% [%s]" % (scores.mean(), label))
+    # print("Accuracy: %0.2f%% [%s]" % (scores.mean(), label))
     #print(np.mean(scores))
     
     
