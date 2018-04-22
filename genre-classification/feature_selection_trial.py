@@ -15,10 +15,10 @@ dataframe = pandas.read_csv(url, names=names);
 array = dataframe.values
 # print(np.size(array,1))
 X = array[:,0:8] #use all features except class label (type 1 or 0)
-# print(np.size(X,1))
+print(np.size(X,1))
 # print(X)
 Y = array[:,8] #type 1 or type 0
-# print(np.size(Y))
+print(np.size(Y))
 # print(Y);
 
 print("Univariate tests")
