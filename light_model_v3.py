@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import pickle
+import os.path
 from xgboost import XGBClassifier
 from sklearn import neighbors, svm, tree
 from sklearn.ensemble import AdaBoostClassifier, VotingClassifier, RandomForestClassifier
@@ -33,16 +35,25 @@ def rfe(nb_features):
     print("RFE with", nb_features, "features")
     model = LogisticRegression()
     rfe = RFE(model, nb_features)  # selecting top features
+    fit_data_dmp = 'fit_data.dmp'
+    if os.path.isfile(fit_data_dmp):
+        with open(fit_data_dmp,'rb') as f:
+            fit_data = pickle.load(f)
+    else:
+        fit_data = rfe.fit(X,Y)
+        with open(fit_data_dmp, 'wb') as f:
+            pickle.dump(fit_data,f) #saves the RFE model to the disk
     # print("Num features:", rfe.fit(X, Y).n_features_)
     # print("Selected features:", rfe.fit(X, Y).support_)  # the features marked with 'True' are the selected features
     # print("Feature ranking:", rfe.fit(X, Y).ranking_)  # the '1' corresponds to the selected features
-    filter_condition = np.hstack((rfe.fit(X, Y).ranking_ == 1, [False]))
+    filter_condition = np.hstack((fit_data.ranking_ == 1, [False]))
+    #rfe.fit(X, Y)
     filtered_matrix = array[:, filter_condition]
     # print(filtered_matrix)
     return filtered_matrix.astype(float), array[:, -1]
 
 #selecting the top 150 features
-x,y = rfe(200)
+x,y = rfe(100)
 
 
 clf_svm = svm.SVC(probability=True)
@@ -53,14 +64,16 @@ clf_gnb = GaussianNB()
 clf_lda = LinearDiscriminantAnalysis()
 clf_rfc = RandomForestClassifier()
 clf_ada = AdaBoostClassifier(base_estimator=LogisticRegression(), n_estimators=10)
-clf_xgb = XGBClassifier() # To tune the parameters: http://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn
-clf_voting = VotingClassifier(estimators=[('log', clf_logreg), ('gnb', clf_gnb), ('lda', clf_lda), ('rfc', clf_rfc), ('xgb', clf_xgb)], weights=[3, 1, 3, 1, 3], voting='soft')
+clf_xgb = XGBClassifier() # To tune the parameters: http://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn #to add
+clf_voting = VotingClassifier(estimators=[('log', clf_logreg), ('gnb', clf_gnb), ('lda', clf_lda), ('rfc', clf_rfc), ('xgb', clf_xgb)], weights=[3, 1, 3, 1, 3], voting='soft') #to add
+#clf_voting = VotingClassifier(estimators=[('svm', clf_svm), ('log', clf_logreg), ('gnb', clf_gnb), ('lda', clf_lda), ('rfc', clf_rfc)], voting='soft') #to delete
 
 
-#classifiers = [clf_svm, clf_knn, clf_dtree, clf_logreg, clf_gnb, clf_lda]
-#labels = ['SVM', 'K-NN', 'Decision Tree', 'Logistic Regression', 'Gaussian Naive Bayes', 'LDA']
-classifiers = [clf_voting]
-labels = ['Voting classifier']
+
+#classifiers = [clf_svm, clf_knn, clf_dtree, clf_logreg, clf_gnb, clf_lda] #to comment
+#labels = ['SVM', 'K-NN', 'Decision Tree', 'Logistic Regression', 'Gaussian Naive Bayes', 'LDA'] #to comment
+classifiers = [clf_voting] #toadd
+labels = ['Voting classifier'] #toadd
 
 
 print("----- Accuracies -----")
