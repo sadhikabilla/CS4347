@@ -53,7 +53,7 @@ def rfe(nb_features):
     return filtered_matrix.astype(float), array[:, -1]
 
 #selecting the top 150 features
-x,y = rfe(100)
+x,y = rfe(150)
 
 
 clf_svm = svm.SVC(probability=True)
