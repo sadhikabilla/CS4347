@@ -14,12 +14,12 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 warnings.filterwarnings('ignore')
 
 
-features = ['f' + str(i) for i in range(1, 471)] + ['genre'] # 470 features in total
-data = pd.read_csv('features_train.csv', names=features).values
+features = ['f' + str(i) for i in range(1, 471)] + ['genre'] # 470 features in total, last column for genre
+data = pd.read_csv('features_train.csv', names=features).values # Read the csv file
+
 
 X = data[:, 0:470] # Array with 470 features for each song of the training data
 Y = data[:, 470] # Array with genre name
-
 
 # Feature selection with Recursive Feature Elimination
 def rfe(nb_features):
@@ -27,7 +27,7 @@ def rfe(nb_features):
         with open('fit_data.dmp','rb') as f:
             fit_data = pickle.load(f) # Load the RFE model if already on disk
     else:
-        rfe = RFE(estimator=LogisticRegression(), n_features_to_select=nb_features)  # Select top features
+        rfe = RFE(estimator=LogisticRegression(), n_features_to_select=nb_features)  # Select n top features
         fit_data = rfe.fit(X, Y)
         with open('fit_data.dmp', 'wb') as f:
             pickle.dump(fit_data, f) # Save the RFE model to the disk
@@ -35,6 +35,7 @@ def rfe(nb_features):
     filter_condition = np.hstack((fit_data.ranking_ == 1, [False]))
     filtered_features = data[:, filter_condition].astype(float)
     return filtered_features, data[:, -1], filter_condition[:-1]
+
 
 
 # Keep only the top 150 features to train the classifier

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import os.path
-from xgboost import XGBClassifier
+#from xgboost import XGBClassifier
 from sklearn import neighbors, svm, tree
 from sklearn.ensemble import AdaBoostClassifier, VotingClassifier, RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -49,13 +49,12 @@ def rfe(nb_features):
     # print("Feature ranking:", rfe.fit(X, Y).ranking_)  # the '1' corresponds to the selected features
 
     filter_condition = np.hstack((fit_data.ranking_ == 1, [False]))
-
     str_features = ""
     count = 0
     #Printing out the selected features
     for index, condition in enumerate(filter_condition):
         if condition == True:
-            str_features = str_features + " " + 'f' + str(index)
+            str_features = str_features + " " + str(index)
             count = count + 1
     print(str_features)
     print(count)
@@ -77,16 +76,16 @@ clf_gnb = GaussianNB()
 clf_lda = LinearDiscriminantAnalysis()
 clf_rfc = RandomForestClassifier()
 clf_ada = AdaBoostClassifier(base_estimator=LogisticRegression(), n_estimators=10)
-clf_xgb = XGBClassifier() # To tune the parameters: http://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn #to add
-clf_voting = VotingClassifier(estimators=[('log', clf_logreg), ('gnb', clf_gnb), ('lda', clf_lda), ('rfc', clf_rfc), ('xgb', clf_xgb)], weights=[3, 1, 3, 1, 3], voting='soft') #to add
-#clf_voting = VotingClassifier(estimators=[('svm', clf_svm), ('log', clf_logreg), ('gnb', clf_gnb), ('lda', clf_lda), ('rfc', clf_rfc)], voting='soft') #to delete
+#clf_xgb = XGBClassifier() # To tune the parameters: http://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn #to add
+#clf_voting = VotingClassifier(estimators=[('log', clf_logreg), ('gnb', clf_gnb), ('lda', clf_lda), ('rfc', clf_rfc), ('xgb', clf_xgb)], weights=[3, 1, 3, 1, 3], voting='soft') #to add
+clf_voting = VotingClassifier(estimators=[('svm', clf_svm), ('log', clf_logreg), ('gnb', clf_gnb), ('lda', clf_lda), ('rfc', clf_rfc)], voting='soft') #to delete
 
 
 
-#classifiers = [clf_svm, clf_knn, clf_dtree, clf_logreg, clf_gnb, clf_lda] #to comment
-#labels = ['SVM', 'K-NN', 'Decision Tree', 'Logistic Regression', 'Gaussian Naive Bayes', 'LDA'] #to comment
-classifiers = [clf_voting] #toadd
-labels = ['Voting classifier'] #toadd
+classifiers = [clf_svm, clf_knn, clf_dtree, clf_logreg, clf_gnb, clf_lda] #to comment
+labels = ['SVM', 'K-NN', 'Decision Tree', 'Logistic Regression', 'Gaussian Naive Bayes', 'LDA'] #to comment
+#classifiers = [clf_voting] #toadd
+#labels = ['Voting classifier'] #toadd
 
 
 print("----- Accuracies -----")
