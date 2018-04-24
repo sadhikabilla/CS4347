@@ -43,10 +43,23 @@ def rfe(nb_features):
         fit_data = rfe.fit(X,Y)
         with open(fit_data_dmp, 'wb') as f:
             pickle.dump(fit_data,f) #saves the RFE model to the disk
+
     # print("Num features:", rfe.fit(X, Y).n_features_)
     # print("Selected features:", rfe.fit(X, Y).support_)  # the features marked with 'True' are the selected features
     # print("Feature ranking:", rfe.fit(X, Y).ranking_)  # the '1' corresponds to the selected features
+
     filter_condition = np.hstack((fit_data.ranking_ == 1, [False]))
+
+    str_features = ""
+    count = 0
+    #Printing out the selected features
+    for index, condition in enumerate(filter_condition):
+        if condition == True:
+            str_features = str_features + " " + 'f' + str(index)
+            count = count + 1
+    print(str_features)
+    print(count)
+
     #rfe.fit(X, Y)
     filtered_matrix = array[:, filter_condition]
     # print(filtered_matrix)
